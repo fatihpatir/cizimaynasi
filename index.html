@@ -9,6 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
     <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -43,20 +44,27 @@
 
     <!-- Alt Kontrol Paneli (Dock) -->
     <div class="ui-overlay bottom-dock">
-        <!-- 1. Satır: Dosya ve Döndürme -->
+        <!-- Panel Aç/Kapa Butonu -->
+        <div id="dock-toggle">▼</div>
+
+        <!-- 1. Satır (Öncelikli): Saydamlık -->
+        <div class="dock-row main-row">
+            <div class="slider-container full-width">
+                <label>Saydamlık (Şeffaflık)</label>
+                <input type="range" id="opacity-slider" min="0" max="1" step="0.01" value="0.5">
+            </div>
+        </div>
+
+        <!-- 2. Satır: Aksiyon Butonları -->
         <div class="dock-row">
             <input type="file" id="file-input" accept="image/*" hidden>
             <button class="action-btn" onclick="document.getElementById('file-input').click()">Resim Seç</button>
             <button class="action-btn rotate-btn" id="rotate-btn" title="Döndür">↻</button>
             <button class="action-btn rotate-btn" id="flip-btn" title="Aynala">⇄</button>
             <button class="action-btn rotate-btn" id="torch-btn" title="Işığı Aç">🔦</button>
-            <div class="slider-container">
-                <label>Saydamlık</label>
-                <input type="range" id="opacity-slider" min="0" max="1" step="0.01" value="0.5">
-            </div>
         </div>
 
-        <!-- 2. Satır: Boyut ve Kontrast -->
+        <!-- 3. Satır: Boyut ve Kontrast -->
         <div class="dock-row">
             <div class="slider-container">
                 <label>Boyut (Zoom)</label>
@@ -78,7 +86,6 @@
                 <label>Eğim Y (Sağa/Sola)</label>
                 <input type="range" id="tilt-y-slider" min="-60" max="60" step="1" value="0">
             </div>
-            <button class="action-btn rotate-btn" id="lock-btn" title="Kontrolleri Kilitle">🔓</button>
         </div>
     </div>
 
@@ -87,48 +94,57 @@
         Designed by Fatih PATIR
     </a>
 
-    <!-- Bilgi Modalı (Detaylı Yardım Rehberi) -->
+    <!-- Bilgi Modalı (Görsel Yardım Rehberi) -->
     <div id="info-modal" class="modal">
         <div class="modal-content help-manual">
             <div class="manual-header">
-                <h2>📘 Kullanım Kılavuzu</h2>
-                <p>Çizim Aynası: AR Destekli Çizim İstasyonu</p>
+                <div class="header-icon">✨</div>
+                <h2>Başlarken</h2>
+                <p>Çizim Aynası ile yaratıcılığını konuştur!</p>
             </div>
             
             <div class="manual-body">
-                <section>
-                    <h3>🚀 Nasıl Başlanır?</h3>
-                    <ol>
-                        <li>Telefonunuzu bir standa veya tutucuya, masadaki kağıda bakacak şekilde sabitleyin.</li>
-                        <li><strong>'Resim Seç'</strong> butonu ile galerinizden bir görsel yükleyin.</li>
-                        <li>Sliderlar ile resmin büyüklüğünü ve şeffaflığını ayarlayın.</li>
-                        <li>Ekrana bakarak, kağıt üzerindeki elinizi ve deseni takip ederek çizmeye başlayın!</li>
-                    </ol>
-                </section>
+                <!-- Adım 1 -->
+                <div class="help-card">
+                    <div class="card-icon">📐</div>
+                    <div class="card-text">
+                        <h4>Hazırlık</h4>
+                        <p>Telefonunu bir standa sabitle ve kağıdı kameranın altına yerleştir.</p>
+                    </div>
+                </div>
 
-                <section>
-                    <h3>🛠️ Butonlar ve Görevleri</h3>
-                    <ul class="btn-list">
-                        <li><strong>Resim Seç:</strong> Telefon galerisinden çizilecek görseli seçer.</li>
-                        <li><strong>↻ (Döndür):</strong> Resmi 90 derece sağa çevirir.</li>
-                        <li><strong>⇄ (Aynala):</strong> Resmi yatay olarak ters çevirir (Simetri kontrolü için).</li>
-                        <li><strong>🔦 (Fener):</strong> Kağıdı aydınlatmak için telefonun flaşını açar.</li>
-                        <li><strong>🔓/🔒 (Kilit):</strong> Tüm ayarları dondurur. Çizim yaparken yanlışlıkla dokunmaları engeller.</li>
-                    </ul>
-                </section>
+                <!-- Adım 2 -->
+                <div class="help-card">
+                    <div class="card-icon">🖼️</div>
+                    <div class="card-text">
+                        <h4>Resim Seç</h4>
+                        <p>Galerinden istediğin deseni seç ve ekrana yerleştir.</p>
+                    </div>
+                </div>
 
-                <section>
-                    <h3>🎚️ Hassas Ayarlar</h3>
-                    <ul class="slider-list">
-                        <li><strong>Saydamlık:</strong> Resmin altındaki elinizi ve kağıdı ne kadar göreceğinizi belirler.</li>
-                        <li><strong>Boyut (Zoom):</strong> Resmi büyütüp küçültür.</li>
-                        <li><strong>Kontrast:</strong> Resimdeki hatları belirginleştirir.</li>
-                        <li><strong>Eğim (Tilt X/Y):</strong> Telefonun açısına göre resmi kağıda tam paralel hale getirir.</li>
-                    </ul>
-                </section>
+                <!-- Adım 3 -->
+                <div class="help-card">
+                    <div class="card-icon">🧤</div>
+                    <div class="card-text">
+                        <h4>Kontrol</h4>
+                        <p>Resmi iki parmağınla büyüt, tek parmağınla taşı. Saydamlığı kendine göre ayarla.</p>
+                    </div>
+                </div>
+
+                <!-- Adım 4 -->
+                <div class="help-card">
+                    <div class="card-icon">🔦</div>
+                    <div class="card-text">
+                        <h4>Işık ve Perspektif</h4>
+                        <p>Karanlıksa feneri aç, açı yamuksa Eğim (Tilt) ayarlarıyla düzelt.</p>
+                    </div>
+                </div>
             </div>
 
-            <button class="action-btn close-btn" id="close-modal">Anladım, Başlayalım!</button>
+            <div class="manual-footer">
+                <button class="action-btn full-btn" id="close-modal">Hadi Başlayalım!</button>
+                <div class="dev-info">Designed by Fatih PATIR</div>
+            </div>
         </div>
     </div>
 

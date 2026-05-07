@@ -96,8 +96,12 @@ video {
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     z-index: 2;
-    pointer-events: none;
+    pointer-events: auto; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
     perspective: 1200px;
+    touch-action: none; 
 }
 
 #overlay-image {
@@ -145,6 +149,11 @@ video {
     box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
 }
 
+#install-btn {
+    background: var(--accent-green);
+    box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3);
+}
+
 .info-btn {
     pointer-events: auto;
     width: 40px; height: 40px;
@@ -185,17 +194,49 @@ video {
 }
 
 .bottom-dock.locked {
-    opacity: 0.15;
-    transform: translateX(-50%) translateY(80%);
+    transform: translateX(-50%) translateY(calc(100% - 40px));
 }
 
-.bottom-dock.locked:hover { opacity: 0.4; } /* Kilitliyken hafif görünürlük */
+#dock-toggle {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-blur-dark);
+    backdrop-filter: blur(20px);
+    width: 50px;
+    height: 30px;
+    border-radius: 12px 12px 0 0;
+    border: 1px solid var(--glass-border);
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+}
 
 .dock-row {
     display: flex;
     align-items: center;
     gap: 12px;
     width: 100%;
+}
+
+.dock-row.main-row {
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    margin-bottom: 5px;
+}
+
+.slider-container.full-width {
+    width: 100%;
+}
+
+.slider-container.full-width label {
+    font-size: 10px;
+    color: var(--apple-blue); /* Önemli olduğu için mavi yaptık */
 }
 
 /* Slider Grupları */
@@ -296,18 +337,93 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
 
 .manual-header {
     background: var(--apple-blue-grad);
-    padding: 30px;
+    padding: 40px 20px;
+    text-align: center;
+    color: white;
+}
+
+.header-icon { font-size: 50px; margin-bottom: 15px; }
+.manual-header h2 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+.manual-header p { font-size: 14px; opacity: 0.9; }
+
+.manual-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.help-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.2s ease;
+}
+
+.help-card:active { transform: scale(0.98); }
+
+.card-icon {
+    font-size: 28px;
+    background: rgba(255,255,255,0.1);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.card-text h4 { font-size: 16px; margin-bottom: 4px; color: var(--apple-blue); }
+.card-text p { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+
+.manual-footer {
+    padding: 20px;
     text-align: center;
 }
 
-.manual-header h2 { font-size: 24px; font-weight: 800; }
+.full-btn { width: 100%; padding: 16px; border-radius: 18px; font-size: 16px; }
 
-.manual-body { padding: 30px; }
-.manual-body section h3 { color: var(--apple-blue); margin-bottom: 12px; font-size: 17px; }
-.manual-body section p, .manual-body section li { font-size: 14px; color: #d1d1d6; line-height: 1.6; }
+.dev-info {
+    margin-top: 15px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
 @media (max-width: 480px) {
     .bottom-dock { padding: 18px; bottom: 20px; }
     .action-btn { padding: 10px 16px; font-size: 13px; }
     .slider-container label { font-size: 8px; }
+}
+
+/* --- Özel Scrollbar Tasarımı (Windows & Chrome) --- */
+.modal-content.help-manual::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-content.help-manual::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-content.help-manual::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.modal-content.help-manual::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+    background-clip: content-box;
+}
+
+/* Firefox Uyumluluğu */
+.modal-content.help-manual {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }

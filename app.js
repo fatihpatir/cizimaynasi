@@ -1,18 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
     const video = document.getElementById('camera-stream');
     const overlayImage = document.getElementById('overlay-image');
+    const overlayContainer = document.getElementById('overlay-container');
     const fileInput = document.getElementById('file-input');
     const opacitySlider = document.getElementById('opacity-slider');
     const sizeSlider = document.getElementById('size-slider');
     const contrastSlider = document.getElementById('contrast-slider');
     const tiltXSlider = document.getElementById('tilt-x-slider');
     const tiltYSlider = document.getElementById('tilt-y-slider');
-    const lockBtn = document.getElementById('lock-btn');
+    const dockToggle = document.getElementById('dock-toggle');
     const installBtn = document.getElementById('install-btn');
-    const flipBtn = document.getElementById('flip-btn');
-    const torchBtn = document.getElementById('torch-btn');
     const bottomDock = document.querySelector('.bottom-dock');
     const rotateBtn = document.getElementById('rotate-btn');
+    const flipBtn = document.getElementById('flip-btn');
+    const torchBtn = document.getElementById('torch-btn');
     const infoTrigger = document.getElementById('info-trigger');
     const infoModal = document.getElementById('info-modal');
     const closeModal = document.getElementById('close-modal');
@@ -23,7 +24,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let videoTrack;
     let deferredPrompt;
 
-    // --- PWA Yükleme Mantığı ---
+    // --- Dokunmatik Değişkenler ---
+    let scale = 1;
+    let posX = 0;
+    let posY = 0;
+    let initialDist = 0;
+    let initialScale = 1;
+    let isDragging = false;
+    let startX, startY;
+
+    // --- PWA Yükleme Mantığı (Android & iOS) ---
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+    if (!isStandalone) {
+        if (isIOS) {
+            // iOS için her zaman göster (Çünkü beforeinstallprompt desteklenmiyor)
+            installBtn.style.display = 'block';
+        }
+    }
+
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
@@ -36,12 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') installBtn.style.display = 'none';
             deferredPrompt = null;
-        } else {
-            alert("iOS (iPhone/iPad) için:\n1. Safari'de Paylaş butonuna dokunun.\n2. 'Ana Ekrana Ekle' seçeneğini seçin.");
+        } else if (isIOS) {
+            alert("iPhone/iPad İçin Kurulum:\n\n1. Alt taraftaki 'Paylaş' (Kare içinde yukarı ok) butonuna dokunun.\n2. Listeyi aşağı kaydırıp 'Ana Ekrana Ekle' seçeneğini seçin.");
         }
     });
 
-    // --- Kamera Erişimi ---
+    // --- Kamera ---
     async function initCamera() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
@@ -51,39 +71,33 @@ document.addEventListener('DOMContentLoaded', () => {
             video.srcObject = stream;
             videoTrack = stream.getVideoTracks()[0];
             
-            // Kamera hazır, açılış ekranını kapat
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.display = 'none', 800);
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.style.display = 'none', 800);
+                }
             }, 1000);
 
-            // Fener desteğini kontrol et
             const caps = videoTrack.getCapabilities();
-            if (!caps.torch) {
-                torchBtn.style.display = 'none';
-            }
+            if (!caps.torch) torchBtn.style.display = 'none';
         } catch (err) {
             console.error("Kamera hatası:", err);
             torchBtn.style.display = 'none';
         }
     }
 
-    // --- Fener Kontrolü ---
+    // --- Fener ---
     torchBtn.addEventListener('click', async () => {
         if (!videoTrack) return;
         try {
             isTorchOn = !isTorchOn;
-            await videoTrack.applyConstraints({
-                advanced: [{ torch: isTorchOn }]
-            });
+            await videoTrack.applyConstraints({ advanced: [{ torch: isTorchOn }] });
             torchBtn.style.background = isTorchOn ? 'var(--apple-blue)' : 'var(--bg-blur)';
-        } catch (err) {
-            console.error("Fener kontrol edilemedi:", err);
-        }
+        } catch (err) { console.error(err); }
     });
 
-    // --- Resim İşleme ---
+    // --- Resim Seçme ---
     fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -98,72 +112,75 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function resetImageState() {
-        currentRotation = 0;
-        isFlipped = false;
-        tiltXSlider.value = 0;
-        tiltYSlider.value = 0;
-        sizeSlider.value = 1;
+        currentRotation = 0; isFlipped = false; posX = 0; posY = 0; scale = 1;
+        tiltXSlider.value = 0; tiltYSlider.value = 0; sizeSlider.value = 1;
         updateImageTransform();
     }
 
-    // --- Kontroller ---
+    // --- Dokunmatik Kontroller ---
+    overlayContainer.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+            isDragging = true;
+            startX = e.touches[0].clientX - posX;
+            startY = e.touches[0].clientY - posY;
+        } else if (e.touches.length === 2) {
+            isDragging = false;
+            initialDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            initialScale = scale;
+        }
+    });
+
+    overlayContainer.addEventListener('touchmove', (e) => {
+        if (isDragging && e.touches.length === 1) {
+            posX = e.touches[0].clientX - startX;
+            posY = e.touches[0].clientY - startY;
+            updateImageTransform();
+        } else if (e.touches.length === 2) {
+            const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            scale = Math.min(Math.max(initialScale * (dist / initialDist), 0.1), 3);
+            sizeSlider.value = scale;
+            updateImageTransform();
+        }
+    });
+
+    overlayContainer.addEventListener('touchend', () => isDragging = false);
+
+    // --- Slider & Buton Olayları ---
     opacitySlider.addEventListener('input', (e) => overlayImage.style.opacity = e.target.value);
-    sizeSlider.addEventListener('input', () => updateImageTransform());
+    sizeSlider.addEventListener('input', (e) => { scale = parseFloat(e.target.value); updateImageTransform(); });
     tiltXSlider.addEventListener('input', () => updateImageTransform());
     tiltYSlider.addEventListener('input', () => updateImageTransform());
     contrastSlider.addEventListener('input', (e) => overlayImage.style.filter = `contrast(${e.target.value}%)`);
     
-    rotateBtn.addEventListener('click', () => {
-        currentRotation = (currentRotation + 90) % 360;
-        updateImageTransform();
-    });
-
+    rotateBtn.addEventListener('click', () => { currentRotation = (currentRotation + 90) % 360; updateImageTransform(); });
     flipBtn.addEventListener('click', () => {
         isFlipped = !isFlipped;
         updateImageTransform();
         flipBtn.style.background = isFlipped ? 'var(--apple-blue)' : 'var(--bg-blur)';
     });
 
-    lockBtn.addEventListener('click', () => {
+    dockToggle.addEventListener('click', () => {
         bottomDock.classList.toggle('locked');
-        lockBtn.innerHTML = bottomDock.classList.contains('locked') ? '🔒' : '🔓';
+        dockToggle.innerHTML = bottomDock.classList.contains('locked') ? '▲' : '▼';
     });
 
     function updateImageTransform() {
-        const scale = sizeSlider.value;
         const tx = tiltXSlider.value;
         const ty = tiltYSlider.value;
         const flip = isFlipped ? -1 : 1;
-        
-        // Transform sırası: Döndür -> Aynala -> Eğ -> Ölçekle
-        overlayImage.style.transform = `
-            rotateZ(${currentRotation}deg) 
-            scaleX(${flip}) 
-            rotateX(${tx}deg) 
-            rotateY(${ty}deg) 
-            scale(${scale})
-        `;
+        overlayImage.style.transform = `translate(${posX}px, ${posY}px) rotateZ(${currentRotation}deg) scaleX(${flip}) rotateX(${tx}deg) rotateY(${ty}deg) scale(${scale})`;
     }
 
     // --- Bilgi Modalı ---
-    const showHelp = () => {
-        infoModal.style.display = 'flex';
-    };
-
+    const showHelp = () => infoModal.style.display = 'flex';
     infoTrigger.addEventListener('click', showHelp);
     closeModal.addEventListener('click', () => {
         infoModal.style.display = 'none';
-        localStorage.setItem('helpShown', 'true'); // Bir daha otomatik gösterme
+        localStorage.setItem('helpShown', 'true');
     });
-    
-    window.addEventListener('click', (e) => {
-        if (e.target === infoModal) infoModal.style.display = 'none';
-    });
+    window.addEventListener('click', (e) => { if (e.target === infoModal) infoModal.style.display = 'none'; });
 
-    // İlk açılışta otomatik göster (Akıllı Hafıza)
-    if (!localStorage.getItem('helpShown')) {
-        setTimeout(showHelp, 1000); // Kamera açıldıktan kısa bir süre sonra
-    }
+    if (!localStorage.getItem('helpShown')) setTimeout(showHelp, 1000);
 
     initCamera();
 });
