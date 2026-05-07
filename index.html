@@ -36,26 +36,28 @@
         <img id="overlay-image" src="" alt="" style="display: none;">
     </div>
 
-    <!-- Üst Arayüz -->
+    <!-- Üst Arayüz (Yeni Düzen) -->
     <div class="ui-overlay top-bar">
-        <button class="action-btn" id="install-btn" style="display: none;">Uygulamayı Yükle</button>
-        <button class="info-btn" id="info-trigger">i</button>
+        <a href="https://fatihpatir.github.io/web" target="_blank" class="brand-signature">Fatih PATIR</a>
+        <div class="top-controls">
+            <button class="action-btn" id="install-btn" style="display: none;">Yükle</button>
+            <button class="info-btn" id="info-trigger">i</button>
+        </div>
     </div>
 
     <!-- Alt Kontrol Paneli (Dock) -->
     <div class="ui-overlay bottom-dock">
-        <!-- Panel Aç/Kapa Butonu -->
         <div id="dock-toggle">▼</div>
 
-        <!-- 1. Satır (Öncelikli): Saydamlık -->
+        <!-- 1. Satır: Saydamlık -->
         <div class="dock-row main-row">
             <div class="slider-container full-width">
-                <label>Saydamlık (Şeffaflık)</label>
+                <label>Saydamlık</label>
                 <input type="range" id="opacity-slider" min="0" max="1" step="0.01" value="0.5">
             </div>
         </div>
 
-        <!-- 2. Satır: Aksiyon Butonları -->
+        <!-- 2. Satır: Aksiyonlar -->
         <div class="dock-row">
             <input type="file" id="file-input" accept="image/*" hidden>
             <button class="action-btn" onclick="document.getElementById('file-input').click()">Resim Seç</button>
@@ -64,10 +66,10 @@
             <button class="action-btn rotate-btn" id="torch-btn" title="Işığı Aç">🔦</button>
         </div>
 
-        <!-- 3. Satır: Boyut ve Kontrast -->
+        <!-- 3. Satır: Ayarlar -->
         <div class="dock-row">
             <div class="slider-container">
-                <label>Boyut (Zoom)</label>
+                <label>Boyut</label>
                 <input type="range" id="size-slider" min="0.1" max="3" step="0.1" value="1">
             </div>
             <div class="slider-container">
@@ -76,86 +78,57 @@
             </div>
         </div>
 
-        <!-- 3. Satır: Perspektif (Eğim) -->
+        <!-- 4. Satır: Perspektif -->
         <div class="dock-row">
             <div class="slider-container">
-                <label>Eğim X (Öne/Arkaya)</label>
+                <label>Eğim X</label>
                 <input type="range" id="tilt-x-slider" min="-60" max="60" step="1" value="0">
             </div>
             <div class="slider-container">
-                <label>Eğim Y (Sağa/Sola)</label>
+                <label>Eğim Y</label>
                 <input type="range" id="tilt-y-slider" min="-60" max="60" step="1" value="0">
             </div>
         </div>
     </div>
 
-    <!-- İmza Alanı -->
-    <a href="https://fatihpatir.github.io/web" target="_blank" class="signature">
-        Designed by Fatih PATIR
-    </a>
-
-    <!-- Bilgi Modalı (Görsel Yardım Rehberi) -->
+    <!-- Bilgi Modalı (Sadeleştirilmiş Premium) -->
     <div id="info-modal" class="modal">
         <div class="modal-content help-manual">
-            <div class="manual-header">
-                <div class="header-icon">✨</div>
-                <h2>Başlarken</h2>
-                <p>Çizim Aynası ile yaratıcılığını konuştur!</p>
+            <div class="manual-header-slim">
+                <div class="header-icon-small">✨</div>
+                <h2>Nasıl Kullanılır?</h2>
             </div>
             
             <div class="manual-body">
-                <!-- Adım 1 -->
-                <div class="help-card">
-                    <div class="card-icon">📐</div>
-                    <div class="card-text">
-                        <h4>Hazırlık</h4>
-                        <p>Telefonunu bir standa sabitle ve kağıdı kameranın altına yerleştir.</p>
-                    </div>
+                <div class="help-card-slim">
+                    <span class="card-num">1</span>
+                    <p>Telefonu standa sabitle, altına kağıdı koy.</p>
                 </div>
-
-                <!-- Adım 2 -->
-                <div class="help-card">
-                    <div class="card-icon">🖼️</div>
-                    <div class="card-text">
-                        <h4>Resim Seç</h4>
-                        <p>Galerinden istediğin deseni seç ve ekrana yerleştir.</p>
-                    </div>
+                <div class="help-card-slim">
+                    <span class="card-num">2</span>
+                    <p>Resmini seç, parmaklarınla yerleştir.</p>
                 </div>
-
-                <!-- Adım 3 -->
-                <div class="help-card">
-                    <div class="card-icon">🧤</div>
-                    <div class="card-text">
-                        <h4>Kontrol</h4>
-                        <p>Resmi iki parmağınla büyüt, tek parmağınla taşı. Saydamlığı kendine göre ayarla.</p>
-                    </div>
+                <div class="help-card-slim">
+                    <span class="card-num">3</span>
+                    <p>Saydamlık ve perspektif ayarını yap.</p>
                 </div>
-
-                <!-- Adım 4 -->
-                <div class="help-card">
-                    <div class="card-icon">🔦</div>
-                    <div class="card-text">
-                        <h4>Işık ve Perspektif</h4>
-                        <p>Karanlıksa feneri aç, açı yamuksa Eğim (Tilt) ayarlarıyla düzelt.</p>
-                    </div>
+                <div class="help-card-slim">
+                    <span class="card-num">4</span>
+                    <p>Ekrana bakarak kağıda çizmeye başla.</p>
                 </div>
             </div>
 
-            <div class="manual-footer">
-                <button class="action-btn full-btn" id="close-modal">Hadi Başlayalım!</button>
-                <div class="dev-info">Designed by Fatih PATIR</div>
+            <div class="manual-footer-slim">
+                <button class="action-btn slim-btn" id="close-modal">Başla</button>
             </div>
         </div>
     </div>
 
     <script src="app.js"></script>
     <script>
-        // Service Worker Kaydı
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('SW Kayıtlı', reg))
-                    .catch(err => console.log('SW Hatası', err));
+                navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
             });
         }
     </script>
