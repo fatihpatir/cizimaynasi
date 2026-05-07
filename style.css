@@ -2,7 +2,7 @@
     --apple-blue: #007aff;
     --apple-blue-grad: linear-gradient(135deg, #007aff, #0051ff);
     --bg-blur: rgba(255, 255, 255, 0.1);
-    --bg-blur-dark: rgba(20, 20, 22, 0.85);
+    --bg-blur-dark: rgba(20, 20, 22, 0.9);
     --text-white: #ffffff;
     --text-muted: #a1a1a6;
     --glass-border: rgba(255, 255, 255, 0.12);
@@ -28,27 +28,57 @@ video { width: 100%; height: 100%; object-fit: cover; }
 #overlay-image { max-width: 90vw; max-height: 80vh; opacity: 0.5; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s; will-change: transform; }
 
 /* Top Bar */
-.top-bar { position: fixed; top: 0; left: 0; width: 100%; z-index: 100; padding: 20px 24px; display: flex; justify-content: flex-end; align-items: center; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); pointer-events: none; }
+.top-bar { position: fixed; top: 0; left: 0; width: 100%; z-index: 100; padding: 20px 24px; display: flex; justify-content: flex-end; align-items: center; pointer-events: none; }
 .top-controls { display: flex; gap: 12px; align-items: center; pointer-events: none; }
 .top-controls button { pointer-events: auto; }
 
 /* Butonlar */
 .action-btn { background: var(--apple-blue-grad); color: #fff; border: none; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
 .action-btn:active { transform: scale(0.95); }
-#install-btn { background: var(--accent-green); box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3); }
+#install-btn { background: var(--accent-green); }
 .info-btn { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-blur); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-/* Dock (Menü) - Yeni Konum */
+/* Sabit Alt İmza Bölgesi */
+.brand-signature-bottom {
+    position: fixed; bottom: 0; left: 0; width: 100%; height: 50px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    text-align: center; z-index: 200;
+    text-decoration: none; display: flex; flex-direction: column; justify-content: center; gap: 2px;
+    pointer-events: auto;
+}
+.sig-name {
+    font-size: 11px; font-weight: 800; letter-spacing: 2.5px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #ffffff 0%, var(--apple-blue) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(0, 122, 255, 0.3));
+}
+.sig-title { font-size: 8px; font-weight: 300; letter-spacing: 1px; color: rgba(255,255,255,0.3); }
+
+/* Dock (Menü) */
 .bottom-dock {
-    position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
-    width: calc(100% - 32px); max-width: 500px; z-index: 100;
+    position: fixed; bottom: 50px; /* İsmin hemen üzerinde */
+    left: 50%; transform: translateX(-50%);
+    width: calc(100% - 32px); max-width: 500px; z-index: 150;
     background: var(--bg-blur-dark); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
     border: 1px solid var(--glass-border); border-radius: 24px; padding: 18px;
     display: flex; flex-direction: column; gap: 14px;
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.bottom-dock.locked { transform: translateX(-50%) translateY(calc(100% - 35px)); }
-#dock-toggle { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); background: var(--bg-blur-dark); width: 44px; height: 25px; border-radius: 10px 10px 0 0; border: 1px solid var(--glass-border); border-bottom: none; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; cursor: pointer; }
+
+/* Kilitlendiğinde (Gizlendiğinde) Menü Tamamen Aşağı Kayar */
+.bottom-dock.locked { 
+    transform: translateX(-50%) translateY(100%); 
+}
+
+/* Ok Butonu - Menü Gizlense Bile Dışarıda Kalır */
+#dock-toggle { 
+    position: absolute; top: -35px; left: 50%; transform: translateX(-50%); 
+    background: var(--bg-blur-dark); width: 50px; height: 35px; 
+    border-radius: 15px 15px 0 0; border: 1px solid var(--glass-border); border-bottom: none; 
+    display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; cursor: pointer; 
+}
 
 .dock-row { display: flex; align-items: center; gap: 10px; width: 100%; }
 .main-row { border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin-bottom: 4px; }
@@ -59,31 +89,8 @@ input[type="range"] { -webkit-appearance: none; width: 100%; height: 3px; backgr
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: #fff; border-radius: 50%; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
 .rotate-btn { background: var(--bg-blur); width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 1px solid var(--glass-border); font-size: 16px; color: #fff; }
 
-/* Sabit Alt İmza */
-.brand-signature-bottom {
-    position: fixed; bottom: 15px; left: 0; width: 100%;
-    text-align: center; z-index: 50;
-    text-decoration: none; transition: 0.3s;
-    pointer-events: auto;
-    display: flex; flex-direction: column; gap: 2px;
-}
-
-.sig-name {
-    font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
-    text-transform: uppercase; color: rgba(255,255,255,0.4);
-}
-
-.sig-title {
-    font-size: 8px; font-weight: 300; letter-spacing: 1px;
-    color: rgba(255,255,255,0.25);
-}
-
-.brand-signature-bottom:hover .sig-name { color: var(--apple-blue); letter-spacing: 3.5px; }
-.brand-signature-bottom:hover .sig-title { color: #fff; opacity: 0.5; }
-
 /* Info Modal */
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.3s; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.3s; }
 .modal-content.help-manual { background: #1c1c1e; border-radius: 28px; border: 1px solid var(--glass-border); max-width: 380px; width: 100%; overflow: hidden; }
 .manual-header-slim { padding: 25px 20px; text-align: center; }
 .header-icon-small { font-size: 32px; margin-bottom: 10px; }
@@ -95,11 +102,6 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18p
 .manual-footer-slim { padding: 0 20px 25px 20px; }
 .slim-btn { width: 100%; padding: 12px; border-radius: 14px; font-size: 15px; }
 
-/* Custom Scrollbar */
-.modal-content.help-manual::-webkit-scrollbar { width: 4px; }
-.modal-content.help-manual::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-
 @media (max-width: 480px) {
-    .bottom-dock { width: calc(100% - 24px); padding: 14px; bottom: 45px; }
-    .action-btn { padding: 8px 16px; font-size: 13px; }
+    .bottom-dock { width: calc(100% - 24px); padding: 14px; bottom: 50px; }
 }
