@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Çizim Aynası | İz Çiz AR</title>
+    <meta name="description" content="Çocuk Gelişimi ve Moda Tasarımı öğrencileri için AR çizim asistanı.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Açılış Ekranı -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">🪞</div>
+            <h1>Çizim Aynası</h1>
+            <div class="loader"></div>
+        </div>
+    </div>
+
+    <!-- Canlı Kamera Görüntüsü -->
+    <div id="camera-container">
+        <video id="camera-stream" autoplay playsinline muted></video>
+    </div>
+
+    <!-- Üzerine Bindirilen Resim -->
+    <div id="overlay-container">
+        <img id="overlay-image" src="" alt="" style="display: none;">
+    </div>
+
+    <!-- Üst Arayüz -->
+    <div class="ui-overlay top-bar">
+        <button class="action-btn" id="install-btn" style="display: none;">Uygulamayı Yükle</button>
+        <button class="info-btn" id="info-trigger">i</button>
+    </div>
+
+    <!-- Alt Kontrol Paneli (Dock) -->
+    <div class="ui-overlay bottom-dock">
+        <!-- 1. Satır: Dosya ve Döndürme -->
+        <div class="dock-row">
+            <input type="file" id="file-input" accept="image/*" hidden>
+            <button class="action-btn" onclick="document.getElementById('file-input').click()">Resim Seç</button>
+            <button class="action-btn rotate-btn" id="rotate-btn" title="Döndür">↻</button>
+            <button class="action-btn rotate-btn" id="flip-btn" title="Aynala">⇄</button>
+            <button class="action-btn rotate-btn" id="torch-btn" title="Işığı Aç">🔦</button>
+            <div class="slider-container">
+                <label>Saydamlık</label>
+                <input type="range" id="opacity-slider" min="0" max="1" step="0.01" value="0.5">
+            </div>
+        </div>
+
+        <!-- 2. Satır: Boyut ve Kontrast -->
+        <div class="dock-row">
+            <div class="slider-container">
+                <label>Boyut (Zoom)</label>
+                <input type="range" id="size-slider" min="0.1" max="3" step="0.1" value="1">
+            </div>
+            <div class="slider-container">
+                <label>Kontrast</label>
+                <input type="range" id="contrast-slider" min="0" max="200" step="1" value="100">
+            </div>
+        </div>
+
+        <!-- 3. Satır: Perspektif (Eğim) -->
+        <div class="dock-row">
+            <div class="slider-container">
+                <label>Eğim X (Öne/Arkaya)</label>
+                <input type="range" id="tilt-x-slider" min="-60" max="60" step="1" value="0">
+            </div>
+            <div class="slider-container">
+                <label>Eğim Y (Sağa/Sola)</label>
+                <input type="range" id="tilt-y-slider" min="-60" max="60" step="1" value="0">
+            </div>
+            <button class="action-btn rotate-btn" id="lock-btn" title="Kontrolleri Kilitle">🔓</button>
+        </div>
+    </div>
+
+    <!-- İmza Alanı -->
+    <a href="https://fatihpatir.github.io/web" target="_blank" class="signature">
+        Designed by Fatih PATIR
+    </a>
+
+    <!-- Bilgi Modalı (Detaylı Yardım Rehberi) -->
+    <div id="info-modal" class="modal">
+        <div class="modal-content help-manual">
+            <div class="manual-header">
+                <h2>📘 Kullanım Kılavuzu</h2>
+                <p>Çizim Aynası: AR Destekli Çizim İstasyonu</p>
+            </div>
+            
+            <div class="manual-body">
+                <section>
+                    <h3>🚀 Nasıl Başlanır?</h3>
+                    <ol>
+                        <li>Telefonunuzu bir standa veya tutucuya, masadaki kağıda bakacak şekilde sabitleyin.</li>
+                        <li><strong>'Resim Seç'</strong> butonu ile galerinizden bir görsel yükleyin.</li>
+                        <li>Sliderlar ile resmin büyüklüğünü ve şeffaflığını ayarlayın.</li>
+                        <li>Ekrana bakarak, kağıt üzerindeki elinizi ve deseni takip ederek çizmeye başlayın!</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h3>🛠️ Butonlar ve Görevleri</h3>
+                    <ul class="btn-list">
+                        <li><strong>Resim Seç:</strong> Telefon galerisinden çizilecek görseli seçer.</li>
+                        <li><strong>↻ (Döndür):</strong> Resmi 90 derece sağa çevirir.</li>
+                        <li><strong>⇄ (Aynala):</strong> Resmi yatay olarak ters çevirir (Simetri kontrolü için).</li>
+                        <li><strong>🔦 (Fener):</strong> Kağıdı aydınlatmak için telefonun flaşını açar.</li>
+                        <li><strong>🔓/🔒 (Kilit):</strong> Tüm ayarları dondurur. Çizim yaparken yanlışlıkla dokunmaları engeller.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>🎚️ Hassas Ayarlar</h3>
+                    <ul class="slider-list">
+                        <li><strong>Saydamlık:</strong> Resmin altındaki elinizi ve kağıdı ne kadar göreceğinizi belirler.</li>
+                        <li><strong>Boyut (Zoom):</strong> Resmi büyütüp küçültür.</li>
+                        <li><strong>Kontrast:</strong> Resimdeki hatları belirginleştirir.</li>
+                        <li><strong>Eğim (Tilt X/Y):</strong> Telefonun açısına göre resmi kağıda tam paralel hale getirir.</li>
+                    </ul>
+                </section>
+            </div>
+
+            <button class="action-btn close-btn" id="close-modal">Anladım, Başlayalım!</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Service Worker Kaydı
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW Kayıtlı', reg))
+                    .catch(err => console.log('SW Hatası', err));
+            });
+        }
+    </script>
+</body>
+</html>
