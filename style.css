@@ -2,32 +2,18 @@
     --apple-blue: #007aff;
     --apple-blue-grad: linear-gradient(135deg, #007aff, #0051ff);
     --bg-blur: rgba(255, 255, 255, 0.1);
-    --bg-blur-dark: rgba(20, 20, 22, 0.8);
+    --bg-blur-dark: rgba(20, 20, 22, 0.85);
     --text-white: #ffffff;
     --text-muted: #a1a1a6;
     --glass-border: rgba(255, 255, 255, 0.12);
     --accent-green: #34c759;
 }
 
-* {
-    margin: 0; padding: 0; box-sizing: border-box;
-    font-family: 'Inter', -apple-system, sans-serif;
-    -webkit-tap-highlight-color: transparent;
-}
-
-body {
-    background: #000; color: var(--text-white);
-    height: 100vh; width: 100vw; overflow: hidden; position: fixed;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+body { background: #000; color: var(--text-white); height: 100vh; width: 100vw; overflow: hidden; position: fixed; }
 
 /* Splash Screen */
-#splash-screen {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #000; z-index: 1000;
-    display: flex; justify-content: center; align-items: center;
-    transition: opacity 0.8s ease;
-}
-
+#splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: flex; justify-content: center; align-items: center; transition: opacity 0.8s ease; }
 .splash-content { text-align: center; }
 .splash-logo { font-size: 80px; margin-bottom: 20px; }
 .splash-content h1 { font-size: 26px; font-weight: 800; color: #fff; }
@@ -41,35 +27,20 @@ video { width: 100%; height: 100%; object-fit: cover; }
 #overlay-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; pointer-events: auto; display: flex; justify-content: center; align-items: center; perspective: 1200px; touch-action: none; }
 #overlay-image { max-width: 90vw; max-height: 80vh; opacity: 0.5; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s; will-change: transform; }
 
-/* Top Bar & Brand Signature */
-.top-bar {
-    position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
-    padding: 20px 24px;
-    display: flex; justify-content: space-between; align-items: center;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
-    pointer-events: none;
-}
-
-.brand-signature {
-    pointer-events: auto;
-    font-size: 13px; font-weight: 600; letter-spacing: 1px;
-    text-transform: uppercase; color: rgba(255,255,255,0.6);
-    text-decoration: none; transition: 0.3s;
-}
-.brand-signature:hover { color: var(--apple-blue); }
-
+/* Top Bar */
+.top-bar { position: fixed; top: 0; left: 0; width: 100%; z-index: 100; padding: 20px 24px; display: flex; justify-content: flex-end; align-items: center; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); pointer-events: none; }
 .top-controls { display: flex; gap: 12px; align-items: center; pointer-events: none; }
 .top-controls button { pointer-events: auto; }
 
 /* Butonlar */
 .action-btn { background: var(--apple-blue-grad); color: #fff; border: none; padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
 .action-btn:active { transform: scale(0.95); }
-#install-btn { background: var(--accent-green); }
+#install-btn { background: var(--accent-green); box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3); }
 .info-btn { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-blur); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-/* Dock */
+/* Dock (Menü) - Yeni Konum */
 .bottom-dock {
-    position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+    position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
     width: calc(100% - 32px); max-width: 500px; z-index: 100;
     background: var(--bg-blur-dark); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
     border: 1px solid var(--glass-border); border-radius: 24px; padding: 18px;
@@ -88,32 +59,47 @@ input[type="range"] { -webkit-appearance: none; width: 100%; height: 3px; backgr
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: #fff; border-radius: 50%; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
 .rotate-btn { background: var(--bg-blur); width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 1px solid var(--glass-border); font-size: 16px; color: #fff; }
 
-/* Info Modal (New Slim Look) */
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.3s; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-.modal-content.help-manual {
-    background: #1c1c1e; border-radius: 28px; border: 1px solid var(--glass-border);
-    max-width: 380px; width: 100%; overflow: hidden;
+/* Sabit Alt İmza */
+.brand-signature-bottom {
+    position: fixed; bottom: 15px; left: 0; width: 100%;
+    text-align: center; z-index: 50;
+    text-decoration: none; transition: 0.3s;
+    pointer-events: auto;
+    display: flex; flex-direction: column; gap: 2px;
 }
 
+.sig-name {
+    font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+    text-transform: uppercase; color: rgba(255,255,255,0.4);
+}
+
+.sig-title {
+    font-size: 8px; font-weight: 300; letter-spacing: 1px;
+    color: rgba(255,255,255,0.25);
+}
+
+.brand-signature-bottom:hover .sig-name { color: var(--apple-blue); letter-spacing: 3.5px; }
+.brand-signature-bottom:hover .sig-title { color: #fff; opacity: 0.5; }
+
+/* Info Modal */
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-content.help-manual { background: #1c1c1e; border-radius: 28px; border: 1px solid var(--glass-border); max-width: 380px; width: 100%; overflow: hidden; }
 .manual-header-slim { padding: 25px 20px; text-align: center; }
 .header-icon-small { font-size: 32px; margin-bottom: 10px; }
 .manual-header-slim h2 { font-size: 20px; font-weight: 700; color: #fff; }
-
 .manual-body { padding: 0 20px 20px 20px; display: flex; flex-direction: column; gap: 10px; }
 .help-card-slim { background: rgba(255,255,255,0.04); padding: 14px; border-radius: 16px; display: flex; align-items: center; gap: 12px; }
 .card-num { background: var(--apple-blue); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0; }
 .help-card-slim p { font-size: 13px; color: #d1d1d6; line-height: 1.4; }
-
 .manual-footer-slim { padding: 0 20px 25px 20px; }
 .slim-btn { width: 100%; padding: 12px; border-radius: 14px; font-size: 15px; }
 
-/* Scrollbar */
+/* Custom Scrollbar */
 .modal-content.help-manual::-webkit-scrollbar { width: 4px; }
 .modal-content.help-manual::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
 @media (max-width: 480px) {
-    .bottom-dock { width: calc(100% - 24px); padding: 14px; bottom: 20px; }
+    .bottom-dock { width: calc(100% - 24px); padding: 14px; bottom: 45px; }
     .action-btn { padding: 8px 16px; font-size: 13px; }
 }
